@@ -10,10 +10,45 @@ export const createTodo = async (req: Request, res: Response, next: NextFunction
   }
 }
 
-export const getTodo = async (req: Request, res: Response, next: NextFunction) => {
+export const getTodos = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const allTodos = await TodoModel.find({})
     res.status(200).json(allTodos)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const getTodoById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params
+    const todoModel = await TodoModel.findById(id)
+
+    if (todoModel) {
+      return res.status(200).json(todoModel)
+    } else {
+      return res.status(404).send()
+    }
+
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const updateTodo = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params
+    const updatedTodo = await TodoModel.findByIdAndUpdate(id, req.body, {
+      new: true,
+      useFindAndModify: false
+    })
+
+    if (updatedTodo) {
+      res.status(200).json(updatedTodo)
+    } else {
+      res.status(404).send()
+    }
+
   } catch (err) {
     next(err)
   }
