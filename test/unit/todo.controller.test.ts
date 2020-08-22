@@ -28,15 +28,15 @@ describe("TodoController.createTodo", () => {
     expect(TodoModel.create).toBeCalledWith(newTodo)
   })
 
-  it("should return 201 response code", () => {
-    TodoController.createTodo(req, res)
+  it("should return 201 response code", async () => {
+    await TodoController.createTodo(req, res)
     expect(res.statusCode).toBe(201)
     expect(res._isEndCalled()).toBeTruthy()
   })
 
-  it("should return json body in response", () => {
+  it("should return json body in response", async () => {
     (TodoModel.create as jest.Mock).mockReturnValue(newTodo)
-    TodoController.createTodo(req, res)
+    await TodoController.createTodo(req, res)
     expect(res._getJSONData()).toStrictEqual(newTodo)
   })
 })
