@@ -4,6 +4,8 @@ import newTodo from "../mock-data/new-todo.json"
 
 const endpointUrl = "/todos/"
 
+let firstTodo: any;
+
 describe(endpointUrl, () => {
   test("GET " + endpointUrl, async () => {
     const response = await request(app).get(endpointUrl)
@@ -11,6 +13,19 @@ describe(endpointUrl, () => {
     expect(Array.isArray(response.body)).toBeTruthy()
     expect(response.body[0].title).toBeDefined()
     expect(response.body[0].done).toBeDefined()
+    firstTodo = response.body[0]
+  })
+
+  test("GET by Id " + endpointUrl + ":id", async () => {
+    const response = await request(app).get(endpointUrl + firstTodo._id)
+    expect(response.status).toBe(200)
+    expect(response.body.title).toBe(firstTodo.title)
+    expect(response.body.done).toBe(firstTodo.done)
+  })
+
+  test("GET todo by Id doesn't exist " + endpointUrl + ":id", async () => {
+    const response = await request(app).get(endpointUrl + "5f412adc87daa749771f6536")
+    expect(response.status).toBe(404)
   })
 
   it("POST " + endpointUrl, async () => {
