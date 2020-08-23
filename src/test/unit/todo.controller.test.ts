@@ -6,10 +6,7 @@ import newTodo from "../mock-data/new-todo.json"
 import allTodos from "../mock-data/all-todos.json"
 import savedTodo from "../mock-data/saved-todo.json"
 
-TodoModel.create = jest.fn() // Mock/Spy Function
-TodoModel.find = jest.fn()
-TodoModel.findById = jest.fn()
-TodoModel.findByIdAndUpdate = jest.fn()
+jest.mock("../../model/todo.model")
 
 let req: MockRequest<any>, res: MockResponse<any>, next: jest.Mock
 const todoId = "5f412adc87d61749601f6536"
@@ -18,6 +15,42 @@ beforeEach(() => {
   req = httpMocks.createRequest()
   res = httpMocks.createResponse()
   next = jest.fn()
+})
+
+describe("TodoController.delete", () => {
+  it("should have a deleteTodo function", () => {
+    expect(typeof TodoController.deleteTodo).toBe("function")
+  })
+
+  it("should call TodoModel.findByIdAndDelete", async () => {
+    req.params.id = todoId
+    await TodoController.deleteTodo(req, res, next)
+    expect(TodoModel.findByIdAndDelete).toHaveBeenCalledWith(todoId)
+  })
+
+  it("should delete todo and return it with status code of 200", async () => {
+    req.params.id = savedTodo._id;
+    (TodoModel.findByIdAndDelete as jest.Mock).mockReturnValue(savedTodo)
+    await TodoController.deleteTodo(req, res, next)
+    expect(res.statusCode).toBe(200)
+    expect(res._isEndCalled()).toBeTruthy()
+    expect(res._getJSONData()).toStrictEqual(savedTodo)
+  })
+
+  it("should handle error in deleteTodo", async () => {
+    const errorMessage = { message: "Error while deleting" }
+    const rejectedPromise = Promise.reject(errorMessage);
+    (TodoModel.findByIdAndDelete as jest.Mock).mockReturnValue(rejectedPromise)
+    await TodoController.deleteTodo(req, res, next)
+    expect(next).toHaveBeenCalledWith(errorMessage)
+  })
+
+  it("should return 404 if todo not found", async () => {
+    (TodoModel.findByIdAndDelete as jest.Mock).mockReturnValue(null)
+    await TodoController.deleteTodo(req, res, next)
+    expect(res.statusCode).toBe(404)
+    expect(res._isEndCalled()).toBeTruthy()
+  })
 })
 
 describe("TodoController.update", () => {

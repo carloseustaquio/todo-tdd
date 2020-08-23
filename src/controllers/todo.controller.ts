@@ -53,3 +53,17 @@ export const updateTodo = async (req: Request, res: Response, next: NextFunction
     next(err)
   }
 }
+
+export const deleteTodo = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const todoModel = await TodoModel.findByIdAndDelete(req.params.id)
+
+    if (todoModel) {
+      res.status(200).json(todoModel)
+    } else {
+      res.status(404).send()
+    }
+  } catch (err) {
+    next(err)
+  }
+}
