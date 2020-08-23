@@ -5,6 +5,8 @@ import newTodo from "../mock-data/new-todo.json"
 const endpointUrl = "/todos/"
 
 let firstTodo: any, newTodoId: any;
+const testData = { title: "Make integration tests for PUT", done: true }
+const nonExistingTodoId = "5f412adc87daa749771f6536"
 
 describe(endpointUrl, () => {
   test("GET " + endpointUrl, async () => {
@@ -24,7 +26,7 @@ describe(endpointUrl, () => {
   })
 
   test("GET todo by Id doesn't exist " + endpointUrl + ":id", async () => {
-    const response = await request(app).get(endpointUrl + "5f412adc87daa749771f6536")
+    const response = await request(app).get(endpointUrl + nonExistingTodoId)
     expect(response.status).toBe(404)
   })
 
@@ -50,7 +52,6 @@ describe(endpointUrl, () => {
     })
 
   it("PUT " + endpointUrl, async () => {
-    const testData = { title: "Make integration tests for PUT", done: true }
     const res = await request(app)
       .put(endpointUrl + newTodoId)
       .send(testData)
@@ -60,7 +61,23 @@ describe(endpointUrl, () => {
   })
 
   test("PUT todo by Id doesn't exist " + endpointUrl + ":id", async () => {
-    const response = await request(app).put(endpointUrl + "5f412adc87daa749771f6536")
+    const response = await request(app).put(endpointUrl + nonExistingTodoId)
     expect(response.status).toBe(404)
+  })
+
+  it("DELETE todo by id" + endpointUrl, async () => {
+    const res = await request(app)
+      .delete(endpointUrl + newTodoId)
+      .send()
+    expect(res.status).toBe(200)
+    expect(res.body.title).toBe(testData.title)
+    expect(res.body.done).toBe(testData.done)
+  })
+
+  it("should return 404 if todo doesn't exist" + endpointUrl, async () => {
+    const res = await request(app)
+      .delete(endpointUrl + nonExistingTodoId)
+      .send()
+    expect(res.status).toBe(404)
   })
 })
