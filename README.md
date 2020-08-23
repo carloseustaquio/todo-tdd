@@ -6,7 +6,7 @@ Todo List app backend built to practice TDD API techniques.
 
 ## Technologies ⌨️
 
-Typescript, Node.js, Express, MongoDB.
+Typescript, Node.js, Express, MongoDB, Jest.
 
 ## How to run 🧪
 
