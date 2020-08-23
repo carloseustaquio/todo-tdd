@@ -1,6 +1,10 @@
 import express, { Request, Response, NextFunction } from 'express'
+import { config as dotEnvConfig } from "dotenv"
 import todoRoutes from "./routes/todo.routes"
 import * as mongodb from "./mongodb/mongodb.connect"
+
+// configure envaironment variables
+dotEnvConfig()
 
 mongodb.connect()
 
