@@ -1,12 +1,13 @@
 import * as TodoController from "../../controllers/todo.controller"
-import TodoModel from "../../model/todo.model"
 import httpMocks, { MockRequest, MockResponse } from "node-mocks-http"
 // mock data
 import newTodo from "../mock-data/new-todo.json"
 import allTodos from "../mock-data/all-todos.json"
 import savedTodo from "../mock-data/saved-todo.json"
 
+// mock TodoModel
 jest.mock("../../model/todo.model")
+import TodoModel from "../../model/todo.model"
 
 let req: MockRequest<any>, res: MockResponse<any>, next: jest.Mock
 const todoId = "5f412adc87d61749601f6536"
